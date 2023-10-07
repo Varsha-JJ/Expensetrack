@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} View expense {% endblock %}
+
+{% block head %} View expense{% endblock  %}
+
+{% block pagehead %} View expense {% endblock  %}
+
+{% block table %}
+
+
+
+    
+
+
+{% for month, month_data in expenses_by_month.items %}
+<h2>{{ month|date:"F Y" }}</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Expense name</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expense in month_data.expenses %}
+        <tr>
+            <td>{{ expense.expense_name }}</td>
+            <td>Rs.{{ expense.amount }}</td>
+            <td>{{ expense.transaction_date }}</td>
+            <td>{{ expense.category }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>Total Amount: Rs.{{ month_data.total_amount }}</p>
+<p>Total Expenses: {{ month_data.expense_count }}</p>
+
+{% empty %}
+<p>No expenses found.</p>
+{% endfor %}
+
+
+{% endblock  %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Expense history {% endblock %}
+
+{% block head %} Expense history{% endblock  %}
+
+{% block pagehead %}Expense history {% endblock  %}
+
+{% block table %}
+
+
+
+    
+   
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Month</th>
+        <th>Total Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+     
+      <tr>
+        {% for expense_group in expenses_by_month %}
+        <tr>
+            <td>{{ expense_group.month|date:"F Y" }}</td>
+            <td>Rs. {{ expense_group.total_amount }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No expenses found.</td>
+        </tr>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+
+
+
+
+{% endblock  %}

@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'expensetrack.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expensetrack',
+        'NAME': 'track',
         'USER' : 'postgres',
         'PASSWORD':'123',
         'HOST':'localhost'
@@ -117,6 +117,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = 'account.Accountdb'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -129,6 +131,12 @@ STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'onlinefirststep1@gmail.com'
+DEFAULT_FROM_EMAIL = 'onlinefirststep1@gmail.com'
+SERVER_EMAIL = 'onlinefirststep1@gmail.com'
+EMAIL_HOST_PASSWORD = 'whvp jyuu pzdv juwa'
 
 EMAIL_USE_TLS = True

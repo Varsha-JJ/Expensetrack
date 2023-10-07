@@ -35,10 +35,10 @@
         <form action="{% url 'login' %}"  method="POST" onsubmit="return validation()" class="bg-light" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-group">
-            <label for="user" class="font-weight-regular"> Username </label>
+            <label for="user" class="font-weight-regular"> Email </label>
             <input
               type="text"
-              name="username"
+              name="email"
               class="form-control"
               id="user"
               autocomplete="off"

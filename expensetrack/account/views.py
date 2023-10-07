@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-# from .models import User
+from .models import Accountdb
 from django.contrib import messages
 from django.contrib.auth.models import User,auth
 
@@ -16,10 +16,10 @@ from django.core.mail import send_mail
 
 def login(request):
     if request.method == 'POST':
-        email = request.POST.get('username')
+        email = request.POST.get('email')
         pswd = request.POST.get('password')
         print(email, pswd)
-        user = auth.authenticate(username=email, password=pswd)
+        user = auth.authenticate(email=email, password=pswd)
         print(user)
         if user is not None:
             request.session['email'] = email
@@ -50,15 +50,16 @@ def register(request):
             messages.warning(request, 'Passwords do not match.')
             return redirect('register')
 
-        if User.objects.filter(email=email).exists():
+        if Accountdb.objects.filter(email=email).exists():
             messages.warning(request, 'Email already exists.')
             return redirect('register')
 
         # You can add more specific validation logic here, such as checking the email format or password complexity.
 
         # Create a new user if data is valid
-        user = User.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
+        user = Accountdb.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
         user.is_active = False
+        user.is_user = True
         user.save()
         # You can add additional logic here, such as sending a confirmation email.
         current_site = get_current_site(request)
@@ -89,7 +90,7 @@ def base(request):
 def forgotpwd(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        user = User.objects.filter(email=email, is_active=True).first() 
+        user = Accountdb.objects.filter(email=email, is_active=True).first() 
         if user:
             user = User.objects.get(email__exact=email)
 
@@ -124,7 +125,7 @@ def forgotpwd(request):
 def activate(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
-        user = User._default_manager.get(pk=uid)
+        user = Accountdb._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
@@ -143,7 +144,7 @@ def activate(request, uidb64, token):
 def resetpassword_validate(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
-        user = User._default_manager.get(pk=uid)
+        user = Accountdb._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
@@ -162,7 +163,7 @@ def resetPassword(request):
 
         if password == confirm_password:
             uid = request.session.get('uid')
-            user = User.objects.get(pk=uid)
+            user = Accountdb.objects.get(pk=uid)
             user.set_password(password)
             user.save()
             messages.success(request, 'Password reset successfully')
