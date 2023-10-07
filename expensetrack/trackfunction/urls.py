@@ -7,4 +7,6 @@ urlpatterns = [
     path('editexpense/',views.editexpense,name='editexpense'),
     path('history/',views.history,name='history'),
     path('report/',views.report,name='report'),
+    path('update/<int:id>/',views.update,name='update'),
+    path('delete/<int:id>/',views.delete,name='delete'),
 ]

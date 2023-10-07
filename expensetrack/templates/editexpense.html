@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} View expense {% endblock %} 
+{% block title %} Edit expense {% endblock %} 
 
-{% block head %} View expense{% endblock  %}
+{% block head %}Edit expense{% endblock  %}
 
-{% block pagehead %} View expense {% endblock  %}
+{% block pagehead %} Edit expense{% endblock  %}
 
 {% block table %}
 
 
 
     
-
+{% include 'messege.html' %}
 
 {% for month, month_data in expenses_by_month.items %}
 <h2>{{ month|date:"F Y" }}</h2>
@@ -24,6 +24,8 @@
             <th>Amount</th>
             <th>Date</th>
             <th>Category</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
@@ -33,6 +35,8 @@
             <td>Rs.{{ expense.amount }}</td>
             <td>{{ expense.transaction_date }}</td>
             <td>{{ expense.category }}</td>
+            <td><a href="{% url 'update' expense.id %}"><i class="fas fa-edit"></i></a></td>
+            <td><a href="{% url 'delete' expense.id %}"><i class="fa fa-trash " aria-hidden="true"></i></a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -46,4 +50,7 @@
 {% endfor %}
 
 
+
+
 {% endblock  %}
+
