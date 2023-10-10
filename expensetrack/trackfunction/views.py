@@ -129,3 +129,38 @@ def history(request):
     # Pass the expenses_by_month queryset to the template for rendering
     context = {'expenses_by_month': expenses_by_month}
     return render(request,"history.html",context)
+
+
+
+from collections import defaultdict
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+from decimal import Decimal
+
+def dashboard(request):
+    expenses = Expense.objects.all()
+    # Retrieve recent transactions
+    recent_transactions = Expense.objects.order_by('-transaction_date')[:5]  # Get the latest 5 transactions, adjust as needed
+    # Calculate expenses by category
+    expenses_by_category = defaultdict(float)
+    for expense in expenses:
+        category = expense.category
+        amount = float(expense.amount)  # Convert Decimal to float
+        expenses_by_category[category] += amount
+    # Create a pie chart
+    labels = list(expenses_by_category.keys())
+    amounts = list(expenses_by_category.values())
+
+    plt.figure(figsize=(8, 8))
+    plt.pie(amounts, labels=labels, autopct='%1.1f%%', startangle=140)
+    
+
+    # Save the pie chart as an image
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+
+    # Convert the image to base64 for embedding in HTML
+    image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    return render(request,"dashboard.html",{'image_base64': image_base64,'recent_transactions':recent_transactions})

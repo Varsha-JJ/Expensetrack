@@ -5,4 +5,54 @@
 
 {% block head %} Dashboard {% endblock  %}
 
-{% block pagehead %} Dashboard {% endblock  %}
+{% block pagehead %}{% endblock  %}
+
+{% block chart %} 
+<div id="">
+    <a href="{% url 'addexpense' %}">
+        <button class="btn btn-success" style="margin-left: 1000px;">Add expense +</button>
+    </a>
+</div>
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-area me-1"></i>
+                Expenses by categories
+            </div>
+            <div class="card-body"> <img src="data:image/png;base64,{{ image_base64 }}" width="500px" height="500px" alt="Pie Chart"></canvas></div>
+        </div>
+    </div>
+    </div>
+<!-- <div id="pie-chart-container">
+    <img src="data:image/png;base64,{{ image_base64 }}" alt="Pie Chart">
+</div> -->
+
+{% endblock  %}
+
+{% block tablehead %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Expense name</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in recent_transactions %}
+        <tr>
+            <td>{{ transaction.expense_name }}</td>
+            <td>Rs.{{ transaction.amount }}</td>
+            <td>{{ transaction.transaction_date }}</td>
+            <td>{{ transaction.category }}</td>
+            <td><a href="{% url 'update' transaction.id %}"><i class="fas fa-edit"></i></a></td>
+            <td><a href="{% url 'delete' transaction.id %}"><i class="fa fa-trash " aria-hidden="true"></i></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock  %}

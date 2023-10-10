@@ -175,8 +175,7 @@ def resetPassword(request):
         return render(request, 'ResetPassword.html')
 
 
-def dashboard(request):
-    return render(request,"dashboard.html")
+
 
 
 
