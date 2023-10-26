@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Expense report {% endblock %}
+
+{% block head %}{% endblock  %}
+
+{% block pagehead %} {% endblock  %}
+
+
+{% block chart %}
+
+
+{% endblock %}
+
+{% block table %}
+<h3>Expense Report </h3><br><br>
+
+<h4 class="mt-3">Monthly Expenses:</h4>
+
+        {% for year_data in yearly_data %}
+            <h4>For year {{ year_data.year}}</h4>
+               
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for monthly_expense in year_data.monthly_expenses %}
+                                <tr>
+                                    <td>{{ monthly_expense.month }}</td>
+                                    <td>Rs. {{ monthly_expense.total }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+        {% endfor %}
+    </tbody>
+</table>
+<a style="margin-left: 1050px;" href="{% url 'generate_pdf_monthly' %}" ><button class="btn  btn-success ">Download </button></a>
+
+
+
+
+<h4 class="mt-3">Yearly Expenses:</h4>
+    
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for y in yearly_expenses %}
+        <tr>
+            <td>{{y.year}}</td>
+            <td>Rs. {{ y.total }}</td>
+        </tr>
+        {%  endfor %}
+    </tbody>
+</table>
+<a style="margin-left: 1050px;" href="{% url 'generate_pdf_yearly' %}" ><button class="btn  btn-success ">Download </button></a>
+
+
+<h4 class="mt-3">Category-wise Expenses:</h4>
+<table class="table table-bordered ">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category_expense in category_expenses %}
+        <tr>
+            <td>{{ category_expense.category }}</td>
+            <td>Rs. {{ category_expense.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- <a style="margin-left: 1050px;" href="{% url 'generate_pdf_file_category' %}" ><button class="btn  btn-success ">Download </button></a> -->
+
+{% endblock  %}
+

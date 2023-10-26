@@ -7,36 +7,93 @@
 
 {% block pagehead %}Expense history {% endblock  %}
 
+
 {% block table %}
 
-
-
-    
-   
-<table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Month</th>
-        <th>Total Amount</th>
-      </tr>
-    </thead>
-    <tbody>
+{% include 'messege.html' %}
+<form method="get">
+<div class="row">
+  <div class="col-md-4 form-group">
       
+          <label for="start_date">Start Date:</label>
+          <input type="date" name="start_date" class="form-control" id="start_date" value="{{ start_date }}">
+    
+  </div>
+  <div class="col-md-4 form-group">
      
-      <tr>
-        {% for expense_group in expenses_by_month %}
-        <tr>
-            <td>{{ expense_group.month|date:"F Y" }}</td>
-            <td>Rs. {{ expense_group.total_amount }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="2">No expenses found.</td>
-        </tr>
-        {% endfor %}
-      </tr>
-    </tbody>
-  </table>
+          <label for="end_date">End Date:</label>
+          <input type="date" class="form-control" name="end_date" id="end_date" value="{{ end_date }}">
+     
+  </div>
+  <div class="col-md-4 form-group">
+     
+          <label for="category">Category:</label>
+          <select name="category" id="category" class="form-select">
+              <option value="">All</option>
+              <!-- Loop through the categories dictionary to create options -->
+              {% for category_key, category_value in categories.items %}
+                  <option value="{{ category_key }}">{{ category_value }}</option>
+              {% endfor %}
+          </select>
+     
+  </div>
+  <div class="col-md-3 form-group align-self-end mt-2 ">
+   
+        <button type="submit" class="btn btn-primary btn-block">Filter</button>
+  
+</div>
+</div>
+</form>
+
+
+<table class="table table-bordered mt-3 ">
+<thead>
+    <tr>
+        <th>Expense name</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Category</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+</thead>
+<tbody>
+    {% for expense in expenses %}
+    <tr>
+        <td>{{ expense.expense_name }}</td>
+        <td>Rs.{{ expense.amount }}</td>
+        <td>{{ expense.transaction_date }}</td>
+        <td>{{ expense.category }}</td>
+        <td><a href="{% url 'update' expense.id %}"><i class="fas fa-edit"></i></a></td>
+        <td><a href="{% url 'delete' expense.id %}"><i class="fa fa-trash " aria-hidden="true"></i></a></td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% if expenses.has_previous %}
+      
+      <li class="page-item">
+        <a class="page-link" href="?page={{ expenses.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% endif %}
+    
+    <li class="page-item disabled"><span class="page-link">Page {{ expenses.number }} of {{ expenses.paginator.num_pages }}</span></li>
+
+    {% if expenses.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ expenses.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      
+    {% endif %}
+  </ul>
+</nav>
 
 
 

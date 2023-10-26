@@ -41,12 +41,12 @@
             <div class="row mb-2">
               <div class="col">
                 <label for="fname" class="form-label">First name</label>
-                <input type="text" name="first_name" id="fname" class="form-control" placeholder="First name" >
+                <input type="text" name="first_name" id="fname" class="form-control" placeholder="First name" onkeyup="fnameValidation(this)">
                 <span id="ufname" class="text-danger font-weight-regular"> </span>
               </div>
               <div class="col mb-2">
                 <label for="lname" class="form-label">Last name</label>
-                <input type="text"  name="last_name" id="lname" class="form-control" placeholder="Last name" >
+                <input type="text"  name="last_name" id="lname" class="form-control" placeholder="Last name" onkeyup="lnameValidation(this)">
                 <span id="ulname" class="text-danger font-weight-regular"> </span>
               </div>
           </div>
@@ -54,11 +54,13 @@
           <div class="form-group mb-2">
             <label class="font-weight-regular"> Email </label>
             <input
-              type="text"
+              type="email"
               name="email"
+              placeholder="Email address"
               class="form-control"
               id="emails"
               autocomplete="off"
+              onkeyup="emailValidation(this)"
             />
             <span id="emailids" class="text-danger font-weight-regular"> </span>
           </div>
@@ -71,6 +73,8 @@
               class="form-control"
               id="user"
               autocomplete="off"
+              onkeyup="usernameValidation(this)"
+              placeholder="Username"
             />
             <span id="username" class="text-danger font-weight-regular"> </span>
           </div>
@@ -83,6 +87,8 @@
               class="form-control"
               id="pass"
               autocomplete="off"
+              onkeyup="passwordValidation(this)"
+              placeholder="Password"
             />
             <span id="passwords" class="text-danger font-weight-regular">
             </span>
@@ -96,6 +102,8 @@
               class="form-control"
               id="conpass"
               autocomplete="off"
+              onkeyup="cpasswordValidation(this)"
+              placeholder="Confrim-password"
             />
             <span id="confrmpass" class="text-danger font-weight-regular">
             </span>

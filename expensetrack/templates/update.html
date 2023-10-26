@@ -38,16 +38,24 @@
                 <label for="hf-date" class=" form-control-label">Date of transaction</label>
             </div>
             <div class="col-12 col-md-9">
-                <input type="text" id="hf-date" name="date" value="{{allitem.transaction_date}}" class="form-control" readonly>
+                <input type="text" id="hf-date" name="date" value="{{allitem.transaction_date}}" class="form-control">
             <!-- <span class="help-block">Please enter sub-category name</span> -->
             </div>
         </div>
-        <div class="row form-group mb-2 ">
+        <div class="row form-group mb-2">
             <div class="col col-md-3">
-                <label for="hf-category" class=" form-control-label">Category of expense</label>
+                <label for="hf-category" class="form-control-label">Category of expense</label>
             </div>
             <div class="col-12 col-md-9">
-                <input type="text" id="hf-date" name="date" value="{{allitem.category}}" class="form-control" readonly>
+                <select id="category" name="category" class="form-select">
+                    {% for category_key, category_value in category_choices.items %}
+                    <option value="{{ category_key }}" {% if category_key == allitem.category %}selected{% endif %}>
+                        {{ category_value }}
+                    </option>
+                {% endfor %}
+                    
+                </select>
+                <!-- <input type="text" id="hf-date" name="category" value="{{allitem.category}}" class="form-control"> -->
             </div>
         </div>
         <div class="row form-group mb-2 w-25">
@@ -59,6 +67,8 @@
     </form>
 </div>
 </div>
+
+    
 <style>
     .btn-sm{
         width: 100px;

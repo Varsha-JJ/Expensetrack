@@ -180,5 +180,12 @@ def resetPassword(request):
 
 
 def logout(request):
+    # if 'email' in request.session:
+    #     print('Session email (before setting):', request.session.get('email'))
+    #     request.session.flush()
     auth.logout(request)
     return redirect('login')
+
+
+def profile(request):
+    return render(request,'profile.html')
