@@ -10,7 +10,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -186,6 +186,50 @@ def logout(request):
     auth.logout(request)
     return redirect('login')
 
-
+@login_required(login_url='login')
 def profile(request):
+    if request.user.is_authenticated:
+        user = request.user
+
     return render(request,'profile.html')
+
+
+@login_required(login_url='login')
+def profile_update(request):
+    if request.method == "POST":
+        uname = request.POST.get('username')
+        password = request.POST.get('password')
+        user_id = request.user.id
+
+        user = Accountdb.objects.get(id=user_id)
+        user.username = uname
+        
+        
+
+
+        if password != None and password != "":
+            user.set_password(password)
+        user.save()
+        messages.success(request,'Profile Updated Successfully')
+        return redirect('profile')
+
+
+
+@login_required(login_url='login')
+def changepassword(request):
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        user = Accountdb.objects.get(email__exact=request.user.email)
+        success = user.check_password(current_password)
+        if success:
+            user.set_password(new_password)
+            user.save()
+            messages.success(request, 'Password updated successfully.')
+            return redirect('login')
+        else:
+            messages.warning(request, 'Current Password and New Password does not match!')
+            return redirect('profile')
+    return render(request, 'profile.html') 

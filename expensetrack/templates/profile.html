@@ -8,6 +8,135 @@
 {% block pagehead %} {% endblock  %}
 
 {% block table %}
- 
 
+
+<form action="{% url 'profile_update' %}"  method="POST" onsubmit="return validation()" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row" >
+        {% include 'messege.html' %}
+      <div class="col">
+        <label for="fname">First name</label>
+        <input id="fname" type="text" class="form-control mt-2" name="fname" value="{{user.first_name}}" readonly>
+      </div>
+      <div class="col">
+        <label for="lname">Last name</label>
+        <input id="lname" type="text" class="form-control mt-2" name="lname" value="{{user.last_name}}" readonly>
+      </div>
+    </div>
+    <div class="row mt-3 ">
+        <div class="col">
+          <label for="lname">Email</label>
+          <input id="email" type="text" class="form-control mt-2" name="email" value="{{user.email}}" readonly>
+        </div>
+        <div class="col">
+            <label for="user">Username</label>
+          <input id="user" type="text" class="form-control mt-2" name="username" value="{{user.username}}" >
+          <span id="name" ></span>
+        </div>
+    </div>
+    <div class="mt-4 ">
+        <button class="btn btn-primary ">Update</button>
+    </div>
+  </form>
+
+<div class="container mt-3">
+    <h4>Update password</h4>
+    <form action="{% url 'changepassword' %}" method="POST" onsubmit="return resetValidate() " id="logform">
+        {% csrf_token %} 
+            <div class="form-group row">
+                <label for="inputpassword" class="col-lg-3 col-md-4 col-form-label">Current password</label>
+                <div class="col-lg-6 col-md-8">
+                    <input type="password" class="form-control mt-2" id="current_password" name="current_password" onkeyup="npasswordValidation(this)">
+                    <span class="new" id="crnt-passwd"> </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="newpassword" class="col-lg-3 col-md-4 col-form-label">New password</label>
+                <div class="col-lg-6 col-md-8">
+                    <input type="password" class="form-control mt-2" id="new_password" name="new_password" onkeyup="passwordValidation(this)">
+                    <span class="new" id="new-passwd"> </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="v-password" class="col-lg-3 col-md-4 col-form-label">Confirm password</label>
+                <div class="col-lg-6 col-md-8">
+                    <input type="password" class="form-control mt-2 " id="confirm_passwords" name="confirm_password" onkeyup="cpasswordValidation(this)">
+                    <span class="new" id="confirm-passwd"> </span>
+                </div>
+            </div>
+            <div class="register-box mt-40">
+                <button type="submit" class="btn btn-primary  f-right">Save</button>
+            </div>
+        </form>
+</div>
+
+  <script>
+    function validation()
+    {
+        let uname = document.getElementById('user').value;
+        if (uname == '')
+        {
+            document.getElementById('name').innerHTML='*required';
+            return false
+        }
+    }
+
+
+
+    function resetValidate() {
+
+        var val = document.getElementById('current_password').value;
+        if(val=="")
+        {
+            document.getElementById('crnt-passwd').innerHTML="**Password can't be null!!";
+            return false;
+        }
+        else{
+            document.getElementById('crnt-passwd').value = "";
+        }
+        
+        var val = document.getElementById('new_password').value;
+        if(val=="")
+        {
+            document.getElementById('new-passwd').innerHTML="**Password can't be null!!";
+            return false;
+        }
+        else{
+            document.getElementById('new-passwd').value = "";
+        }
+        if (!val.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8}/)) 
+        {
+            document.getElementById('new-passwd').innerHTML="** Passwords contain min 8 chars with at least 1 uppercase ,number and 1 special character";
+            return false;
+        }
+        else{
+            document.getElementById('new-passwd').value = "";
+        }
+
+        var val = document.getElementById('confirm_passwords').value;
+        if(val=="")
+            {
+                document.getElementById('confirm-passwd').innerHTML="**Password can't be null!!";
+                return false;
+            }
+            else{
+            document.getElementById('confirm-passwd').value = "";
+        }
+
+        if(val != document.getElementById('new_password').value){
+        document.getElementById('confirm-passwd').innerHTML="**passwords should be matching";
+        return false;
+        }
+        else{
+        document.getElementById('confirm-passwd').innerHTML="";
+        }
+}
+
+  </script>
+
+  <style>
+    span{
+        color:red;
+    }
+  </style>
 {% endblock  %}

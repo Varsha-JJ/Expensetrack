@@ -12,7 +12,7 @@ urlpatterns = [
     path('delete/<int:id>/',views.delete,name='delete'),
     path('generate_pdf_yearly/', views.generate_pdf_yearly, name='generate_pdf_yearly'),
     path('generate_pdf_monthly/', views.generate_pdf_monthly, name='generate_pdf_monthly'),
-    path('generate_pdf_file_category/', views.generate_pdf_file_category, name='generate_pdf_file_category'),
+   
 
 
     

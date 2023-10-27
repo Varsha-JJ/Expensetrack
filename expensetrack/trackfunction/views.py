@@ -7,6 +7,48 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 # Create your views here.
 
+
+
+
+
+
+@login_required(login_url='login')
+@never_cache
+def dashboard(request):
+    if request.user.is_authenticated:
+        expenses = Expense.objects.all()
+        # Retrieve recent transactions
+        recent_transactions = Expense.objects.order_by('-transaction_date')[:5]  # Get the latest 5 transactions, adjust as needed
+        # Calculate expenses by category
+        expenses_by_category = defaultdict(float)
+        for expense in expenses:
+            category = expense.category
+            amount = float(expense.amount)  # Convert Decimal to float
+            expenses_by_category[category] += amount
+        
+        # Create a pie chart
+        labels = list(expenses_by_category.keys())
+        amounts = list(expenses_by_category.values())
+
+        plt.figure(figsize=(8, 8))
+        plt.pie(amounts, labels=labels, autopct='%1.1f%%', startangle=140)
+        
+
+        # Save the pie chart as an image
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png')
+        plt.close()
+
+        # Convert the image to base64 for embedding in HTML
+        image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        return render(request,"dashboard.html",{'image_base64': image_base64,'recent_transactions':recent_transactions})
+    else:
+        messages.warning(request, 'You are not logged in.')
+        return redirect('login')
+
+
+
+
 @login_required(login_url='login')
 @never_cache
 def addexpense(request):
@@ -120,6 +162,9 @@ def editexpense(request):
             messages.warning(request, 'You are not logged in.')
             return redirect('login')
 
+
+
+from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404 
 from datetime import datetime
 @login_required(login_url='login')
@@ -137,13 +182,15 @@ def update(request,id):
                 expense = get_object_or_404(Expense, id=id)
                  # Convert the date string to a datetime object
                 try:
-                    transaction_date = datetime.strptime(transaction_date_str, '%b. %d, %Y')
+                    transaction_date = datetime.strptime(transaction_date_str, '%Y-%m-%d')
                     # Extract the date part in 'YYYY-MM-DD' format
-                    transaction_date = transaction_date.strftime('%Y-%m-%d')
+                    # transaction_date = transaction_date.strftime('%Y-%m-%d')
                 except ValueError:
+                    # messages.warning(request, 'Should be in YYYY-MM-DD format')
+                   
                     # Handle the case where the date string is in an unexpected format
                     # You can return an error message or take appropriate action here
-                    pass
+                    return HttpResponseBadRequest('Invalid date format')
                 expense.expense_name = expense_name
                 expense.amount = new_amount
                 expense.transaction_date = transaction_date
@@ -402,43 +449,6 @@ def generate_pdf_file_monthly():
     buffer.seek(0)
     return buffer
 
-# def generate_pdf_category(request):
-#     response = FileResponse(generate_pdf_file_category(), 
-#                             as_attachment=True, 
-#                             filename='category_expense.pdf')
-#     return response
-
-def generate_pdf_file_category(requset):
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer)
-    year = datetime.now().year
-    category = Expense.objects.filter(transaction_date__year=year
-        ).values('category').annotate(total=Sum('amount')).order_by('category')
-    
-    p.drawString(100,790,f"Category expense for {year}")
-    y = 700
-    p.drawString(100,730,"Category")
-    p.drawString(300,730,"Total")
-    p.drawString(100,720,"----------------------------------------------------------------")
-    for c in category:
-        category = c['category']
-        amount = c['total']
-
-            
-       
-        p.drawString(100,y,f"{category}")
-        p.drawString(300,y,f"Rs. {amount}")
-        y -= 20
-    p.showPage()
-    p.save()
-    buffer.seek(0)
-    return FileResponse(buffer,as_attachment=True, 
-                            filename='category_expense.pdf')
-
-
-
-
-
 
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
@@ -503,36 +513,77 @@ from decimal import Decimal
 
 
 
-@login_required(login_url='login')
-@never_cache
-def dashboard(request):
-    if request.user.is_authenticated:
-        expenses = Expense.objects.all()
-        # Retrieve recent transactions
-        recent_transactions = Expense.objects.order_by('-transaction_date')[:5]  # Get the latest 5 transactions, adjust as needed
-        # Calculate expenses by category
-        expenses_by_category = defaultdict(float)
-        for expense in expenses:
-            category = expense.category
-            amount = float(expense.amount)  # Convert Decimal to float
-            expenses_by_category[category] += amount
-        
-        # Create a pie chart
-        labels = list(expenses_by_category.keys())
-        amounts = list(expenses_by_category.values())
+    
 
-        plt.figure(figsize=(8, 8))
-        plt.pie(amounts, labels=labels, autopct='%1.1f%%', startangle=140)
-        
 
-        # Save the pie chart as an image
-        buffer = BytesIO()
-        plt.savefig(buffer, format='png')
-        plt.close()
 
-        # Convert the image to base64 for embedding in HTML
-        image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-        return render(request,"dashboard.html",{'image_base64': image_base64,'recent_transactions':recent_transactions})
-    else:
-        messages.warning(request, 'You are not logged in.')
-        return redirect('login')
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------------------------not used---------------------------------------
+
+
+# def generate_pdf_category(request):
+#     response = FileResponse(generate_pdf_file_category(), 
+#                             as_attachment=True, 
+#                             filename='category_expense.pdf')
+#     return response
+
+# def generate_pdf_file_category(requset):
+#     buffer = BytesIO()
+#     p = canvas.Canvas(buffer)
+#     year = datetime.now().year
+#     category = Expense.objects.filter(transaction_date__year=year
+#         ).values('category').annotate(total=Sum('amount')).order_by('category')
+    
+#     p.drawString(100,790,f"Category expense for {year}")
+#     y = 700
+#     p.drawString(100,730,"Category")
+#     p.drawString(300,730,"Total")
+#     p.drawString(100,720,"----------------------------------------------------------------")
+#     for c in category:
+#         category = c['category']
+#         amount = c['total']
+
+            
+       
+#         p.drawString(100,y,f"{category}")
+#         p.drawString(300,y,f"Rs. {amount}")
+#         y -= 20
+#     p.showPage()
+#     p.save()
+#     buffer.seek(0)
+#     return FileResponse(buffer,as_attachment=True, 
+#                             filename='category_expense.pdf')
+
+
+
+
