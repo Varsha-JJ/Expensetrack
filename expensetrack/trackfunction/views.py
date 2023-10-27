@@ -215,9 +215,79 @@ def report(request,year=None):
             transaction_date__year=year
         ).values('category').annotate(total=Sum('amount')).order_by('category')
 
+        
+        # Get a list of unique years for which you have data
+        unique_years = Expense.objects.values('transaction_date__year').distinct()
+
+        # Handle form submission and get the selected year or use the current year as the default
+        selected_year = request.GET.get('year', timezone.now().year)
+
+        # Ensure that the selected year is an integer
+        try:
+            selected_year = int(selected_year)
+        except ValueError:
+            return redirect('report')
+
+        # Initialize data to store monthly expenses for each year
+        yearly_data = []
+
+        for year_data in unique_years:
+            year = year_data['transaction_date__year']
+            monthly_expenses = Expense.objects.filter(
+                transaction_date__year=year
+            ).annotate(
+                month=ExtractMonth('transaction_date')
+            ).values('month').annotate(total=Sum('amount')).order_by('month')
+
+            yearly_data.append({
+                'year': year,
+                'monthly_expenses': monthly_expenses,
+            })
+
+        # Create the bar chart for the selected year or all years
+        if selected_year:
+            selected_data = next((data for data in yearly_data if data['year'] == selected_year), None)
+
+            if selected_data:
+                years = [selected_data['year']]
+                monthly_expenses_data = [selected_data['monthly_expenses']]
+                title = f'Monthly Expenses for {selected_year}'
+            else:
+                return redirect('report')
+        else:
+            years = [data['year'] for data in yearly_data]
+            monthly_expenses_data = [data['monthly_expenses'] for data in yearly_data]
+            title = 'Monthly Expenses for All Years'
+
+        # Create the bar chart
+        plt.figure(figsize=(8, 4))
+        months = range(1, 13)
+
+        for year, monthly_expenses in zip(years, monthly_expenses_data):
+            expenses = [next((item['total'] for item in monthly_expenses if item['month'] == month), 0) for month in months]
+            plt.bar(months, expenses, label=str(year))
+
+        plt.xlabel('Months')
+        plt.ylabel('Total Expenses')
+        plt.title(title)
+        plt.xticks(months, [
+            'Jan', 'Feb', 'Mar', 'Apr',
+            'May', 'Jun', 'Jul', 'Aug',
+            'Sep', 'Oct', 'Nov', 'Dec',
+        ])
+        plt.legend()
+
+        # Save the chart to a BytesIO object
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        chart_image = base64.b64encode(buffer.read()).decode()
+        buffer.close()
+
 
         context = {
-           
+        'selected_year': selected_year,
+        'chart_image': chart_image,  
         'yearly_data': yearly_data,
         'yearly_expenses': yearly_expenses,
         'category_expenses': category_expenses,

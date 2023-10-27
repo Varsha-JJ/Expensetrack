@@ -9,7 +9,20 @@
 
 
 {% block chart %}
+  <!-- Add a form with a dropdown for selecting the year -->
+  <form method="get">
+    <label for="year">Select Year:</label>
+    <select name="year" id="year">
+        <option value="">-- All Years --</option>
+        {% for year_data in yearly_data %}
+            <option value="{{ year_data.year }}" {% if selected_year == year_data.year %}selected{% endif %}>{{ year_data.year }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Show Graph" class="btn btn-primary  ">
+</form>
 
+<!-- Add this section to display the bar chart image -->
+<img src="data:image/png;base64,{{ chart_image }}" alt="Monthly Expenses Chart">
 
 {% endblock %}
 
