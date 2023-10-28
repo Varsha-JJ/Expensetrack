@@ -202,11 +202,12 @@ def profile_update(request):
         user_id = request.user.id
 
         user = Accountdb.objects.get(id=user_id)
+
+        if uname == user.username:
+            messages.warning(request, 'No changes made to the username.')
+            return redirect('profile')
+        
         user.username = uname
-        
-        
-
-
         if password != None and password != "":
             user.set_password(password)
         user.save()

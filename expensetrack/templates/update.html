@@ -13,7 +13,7 @@
 
 <div class="container ">
     {% include 'messege.html' %}
-    <form action="{% url 'update' allitem.id %}" method="post" class="form-horizontal">
+    <form action="{% url 'update' allitem.id %}" method="post" class="form-horizontal" onsubmit="return validates()">
         {% csrf_token %}
         <div class="row form-group mb-2 ">
             <div class="col col-md-3">
@@ -21,7 +21,7 @@
             </div>
             <div class="col-12 col-md-9">
                 <input type="text" id="hf-name" name="name" value="{{allitem.expense_name}}" class="form-control" >
-            <!-- <span class="help-block">Please enter sub-category name</span> -->
+                <span class="help-block" id="exname"></span>
             </div>
         </div>
         <div class="row form-group mb-2 ">
@@ -30,7 +30,7 @@
             </div>
             <div class="col-12 col-md-9">
                 <input type="number" id="hf-amount" name="amount" value="{{allitem.amount}}" class="form-control">
-            <!-- <span class="help-block">Please enter sub-category name</span> -->
+                <span class="help-block" id="examount"></span>
             </div>
         </div>
         <div class="row form-group mb-2 ">
@@ -38,8 +38,8 @@
                 <label for="hf-date" class=" form-control-label">Date of transaction</label>
             </div>
             <div class="col-12 col-md-9">
-                <input type="text" id="hf-date" name="date" value="{{allitem.transaction_date}}" placeholder="YYYY-MM-DD" title="YYYY-MM-DD" class="form-control">
-            <!-- <span class="help-block">Please enter sub-category name</span> -->
+                <input type="date" id="hf-date" name="date" value="{{ allitem.transaction_date|date:'Y-m-d' }}" min="2023-01-01" max="2025-12-31" class="form-control">
+                <span class="help-block" id="exdate"></span>
             </div>
         </div>
         <div class="row form-group mb-2">
@@ -55,7 +55,7 @@
                 {% endfor %}
                     
                 </select>
-                <!-- <input type="text" id="hf-date" name="category" value="{{allitem.category}}" class="form-control"> -->
+                <span class="help-block" id="excategory"></span>
             </div>
         </div>
         <div class="row form-group mb-2 w-25">
@@ -69,8 +69,30 @@
 </div>
 
     
+<script>
+
+function validates(){
+    let nameValue = document.getElementById('hf-name').value ;
+    // let price = document.getElementById('hf-amount').value 
+    // var dateInput = document.getElementById('hf-date').value
+    // var categorySelect = document.getElementById('hf-category').value
+
+    if(nameValue == '')
+    {
+        document.getElementById('hf-name').innerHTML='*required';
+    }
+}
+    
+</script>
 <style>
-    .btn-sm{
+.btn-sm{
+    width: 100px;
+    height: 30px;
+}
+span{
+    color: red;
+}
+.btn-sm{
         width: 100px;
         height: 30px;
     }

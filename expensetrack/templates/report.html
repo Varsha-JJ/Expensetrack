@@ -22,7 +22,13 @@
 </form>
 
 <!-- Add this section to display the bar chart image -->
-<img src="data:image/png;base64,{{ chart_image }}" alt="Monthly Expenses Chart">
+<!-- <img src="data:image/png;base64,{{ chart_image }}" alt="Monthly Expenses Chart"> -->
+
+{% if chart_image %}
+    <img src="data:image/png;base64,{{ chart_image }}" alt="Monthly Expenses Chart">
+  {% else %}
+    <p>No chart available.</p>
+  {% endif %}
 
 {% endblock %}
 
@@ -53,8 +59,9 @@
         {% endfor %}
     </tbody>
 </table>
+{% if yearly_data %}
 <a style="margin-left: 1050px;" href="{% url 'generate_pdf_monthly' %}" ><button class="btn  btn-success ">Download </button></a>
-
+{% endif %}
 
 
 
@@ -76,8 +83,9 @@
         {%  endfor %}
     </tbody>
 </table>
+{% if yearly_expenses %}
 <a style="margin-left: 1050px;" href="{% url 'generate_pdf_yearly' %}" ><button class="btn  btn-success ">Download </button></a>
-
+{% endif %}
 
 <h4 class="mt-3">Category-wise Expenses:</h4>
 <table class="table table-bordered ">
@@ -97,7 +105,7 @@
     </tbody>
 </table>
 
-<!-- <a style="margin-left: 1050px;" href="{% url 'generate_pdf_file_category' %}" ><button class="btn  btn-success ">Download </button></a> -->
+
 
 {% endblock  %}
 

@@ -169,39 +169,51 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime
 @login_required(login_url='login')
 @never_cache
-def update(request,id):
+def update(request, id):
     category_choices = dict(Expense.CATEGORY_CHOICES)
-    if request.user.is_authenticated: 
-        allitem = Expense.objects.get(id=id)
-        if request.method == 'POST':
-            expense_name = request.POST.get('name')
-            new_amount = request.POST.get('amount')
-            transaction_date_str = request.POST.get('date')
-            category = request.POST.get('category')
-            if new_amount is not None:
-                expense = get_object_or_404(Expense, id=id)
-                 # Convert the date string to a datetime object
-                try:
-                    transaction_date = datetime.strptime(transaction_date_str, '%Y-%m-%d')
-                    # Extract the date part in 'YYYY-MM-DD' format
-                    # transaction_date = transaction_date.strftime('%Y-%m-%d')
-                except ValueError:
-                    # messages.warning(request, 'Should be in YYYY-MM-DD format')
-                   
-                    # Handle the case where the date string is in an unexpected format
-                    # You can return an error message or take appropriate action here
-                    return HttpResponseBadRequest('Invalid date format')
-                expense.expense_name = expense_name
-                expense.amount = new_amount
-                expense.transaction_date = transaction_date
-                expense.category = category
-                expense.save()
-                messages.success(request, 'Amount updated successfully')
-                return redirect('history')
-        return render(request,"update.html",{"allitem":allitem,"category_choices":category_choices})
-    else:
-            messages.warning(request, 'You are not logged in.')
-            return redirect('login')
+    
+    if not request.user.is_authenticated:
+        messages.warning(request, 'You are not logged in.')
+        return redirect('login')
+
+    allitem = get_object_or_404(Expense, id=id)
+
+    if request.method == 'POST':
+        expense_name = request.POST.get('name')
+        new_amount = request.POST.get('amount')
+        transaction_date_str = request.POST.get('date')
+        category = request.POST.get('category')
+
+        # Check if any required field is empty
+        if not expense_name or not new_amount or not transaction_date_str or not category:
+            messages.warning(request, 'All fields are required.')
+            return render(request, "update.html", {"allitem": allitem, "category_choices": category_choices})
+
+
+        try:
+            transaction_date = datetime.strptime(transaction_date_str, '%Y-%m-%d')
+        except ValueError:
+            messages.warning(request, 'Invalid date format. Use YYYY-MM-DD.')
+            return render(request, "update.html", {"allitem": allitem, "category_choices": category_choices})
+
+        if not new_amount:
+            messages.warning(request, 'Amount cannot be empty.')
+            return render(request, "update.html", {"allitem": allitem, "category_choices": category_choices})
+
+        # Check if the user has permission to update this specific object
+        # if not request.user.has_perm('yourapp.change_expense') or request.user != allitem.user:
+        #     return HttpResponseBadRequest('Unauthorized')
+
+        allitem.expense_name = expense_name
+        allitem.amount = new_amount
+        allitem.transaction_date = transaction_date
+        allitem.category = category
+        allitem.save()
+
+        messages.success(request, 'Amount updated successfully')
+        return redirect('history')
+
+    return render(request, "update.html", {"allitem": allitem, "category_choices": category_choices})
  
     
 @login_required(login_url='login')
@@ -242,6 +254,9 @@ def report(request,year=None):
                 'year': year,
                 'monthly_expenses': monthly_expenses,
             })
+
+        if not yearly_data:
+            return render(request, "report.html")
 
 
         all_years = Expense.objects.values('transaction_date__year').distinct()
