@@ -11,6 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -156,6 +157,7 @@ def resetpassword_validate(request, uidb64, token):
         messages.error(request, 'This link has been expired!')
         return redirect('login')
 
+
 def resetPassword(request):
     if request.method == 'POST':
         password = request.POST['password']
@@ -180,9 +182,6 @@ def resetPassword(request):
 
 
 def logout(request):
-    # if 'email' in request.session:
-    #     print('Session email (before setting):', request.session.get('email'))
-    #     request.session.flush()
     auth.logout(request)
     return redirect('login')
 

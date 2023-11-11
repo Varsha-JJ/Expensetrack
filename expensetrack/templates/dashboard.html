@@ -8,18 +8,36 @@
 {% block pagehead %}{% endblock  %}
 
 {% block chart %} 
-<div id="">
-    <a href="{% url 'addexpense' %}">
-        <button class="btn btn-success" style="margin-left: 1000px;">Add expense +</button>
-    </a>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning  text-white mb-4 box">
+            <div class="card-body text-center">Current month expense <br> Rs. {{ current_month_expenses }}</div>  
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success  text-white mb-4 box">
+            <div class="card-body text-center"><a class="links" href="{% url 'addexpense' %}">Add expense +</a></div>  
+        </div>
+    </div>
 </div>
+
+<!-- Add a form with a dropdown for selecting the year -->
+<form method="get">
+    <label for="year">Select Year:</label>
+    <select name="year" id="year">
+        <option value="">-- All Years --</option>
+        {% for year_data in data %}
+            <option value="{{ year_data.year }}" {% if selected_year == year_data.year %}selected{% endif %}>{{ year_data.year }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Show Graph" class="btn btn-primary  ">
+</form>
+<br><br>
 <div class="row">
     <div class="col-xl-6">
         <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-chart-area me-1"></i>
-                Expenses by categories
-            </div>
+            <p class="text-center ">{{title}}</p>
             <div class="card-body"> <img src="data:image/png;base64,{{ image_base64 }}" width="500px" height="500px" alt="Pie Chart"></canvas></div>
         </div>
     </div>
@@ -31,6 +49,7 @@
 {% endblock  %}
 
 {% block tablehead %}
+<h6>Recently Added Expense</h6>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -55,4 +74,22 @@
         {% endfor %}
     </tbody>
 </table>
+
+<style>
+    .box{
+        height: 70px!important;
+    }
+    .links{
+        text-decoration: none;
+        color: white;
+    }
+    .links:hover{
+        color: white;
+    }
+    
+</style>
 {% endblock  %}
+
+
+
+

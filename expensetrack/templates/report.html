@@ -21,8 +21,7 @@
     <input type="submit" value="Show Graph" class="btn btn-primary  ">
 </form>
 
-<!-- Add this section to display the bar chart image -->
-<!-- <img src="data:image/png;base64,{{ chart_image }}" alt="Monthly Expenses Chart"> -->
+
 
 {% if chart_image %}
     <img src="data:image/png;base64,{{ chart_image }}" alt="Monthly Expenses Chart">
@@ -35,7 +34,7 @@
 {% block table %}
 <h3>Expense Report </h3><br><br>
 
-<h4 class="mt-3">Monthly Expenses:</h4>
+<h4 class="mt-3 bg-info">Monthly Expenses:</h4>
 
         {% for year_data in yearly_data %}
             <h4>For year {{ year_data.year}}</h4>
@@ -60,12 +59,12 @@
     </tbody>
 </table>
 {% if yearly_data %}
-<a style="margin-left: 1050px;" href="{% url 'generate_pdf_monthly' %}" ><button class="btn  btn-success ">Download </button></a>
+<a style="margin-left: 1050px;" href="{% url 'generate_pdf_file_monthly' %}" ><button class="btn  btn-success ">Download </button></a>
 {% endif %}
 
 
 
-<h4 class="mt-3">Yearly Expenses:</h4>
+<h4 class="mt-3 bg-info">Yearly Expenses:</h4>
     
 <table class="table table-bordered">
     <thead>
@@ -84,10 +83,15 @@
     </tbody>
 </table>
 {% if yearly_expenses %}
-<a style="margin-left: 1050px;" href="{% url 'generate_pdf_yearly' %}" ><button class="btn  btn-success ">Download </button></a>
+<a style="margin-left: 1050px;" href="{% url 'generate_pdf_file_yearly' %}" ><button class="btn  btn-success ">Download </button></a>
 {% endif %}
 
-<h4 class="mt-3">Category-wise Expenses:</h4>
+
+
+<h4 class="mt-3 bg-info">Category Expenses:</h4>
+{% for year in category_expense_data %}
+
+<h4 class="mt-3 ">Category-wise Expenses For Year:{{year.year}}</h4>
 <table class="table table-bordered ">
     <thead>
         <tr>
@@ -96,7 +100,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for category_expense in category_expenses %}
+        {% for category_expense in year.category_expenses %}
         <tr>
             <td>{{ category_expense.category }}</td>
             <td>Rs. {{ category_expense.total }}</td>
@@ -104,6 +108,7 @@
         {% endfor %}
     </tbody>
 </table>
+{% endfor %}
 
 
 

@@ -2,7 +2,7 @@
 
 {% for message in messages %}
 
-<div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+<div {% if message.tags %} class="alert alert-dismissible alert-{{ message.tags }}" {% endif %} role="alert">
     {{ message }}
 </div>
 
